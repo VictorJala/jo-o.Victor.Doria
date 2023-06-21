@@ -5,6 +5,7 @@ from dino_runner.components.dinosaur import Dinosaur
 from dino_runner.components.obstacles.obstacle_manager import ObstacleManager
 
 FONT_STYLE = 'freesansbold.ttf'
+GAME_SPEED = 20
 
 
 class Game:
@@ -97,27 +98,33 @@ class Game:
                 self.running = False
             elif event.type == pygame.KEYDOWN:
                 self.run()
+
+    def update_death_count(self):
+        self.save_score = self.score
+        self.score = 0
+        self.death_count += 1
+        self.game_speed = GAME_SPEED
+
+    def show_text(self, text_main, height_pos, width_pos):
+        half_screen_height = height_pos
+        half_screen_width = width_pos
+
+        font = pygame.font.Font(FONT_STYLE, 22)
+        text = font.render(text_main, True, (0, 0, 0))
+        text_rect = text.get_rect()
+        text_rect.center = (half_screen_width, half_screen_height)
+        self.screen.blit(text, text_rect)
         
 
     def show_menu(self):
-        self.screen.fill((255,255,255))
-        half_screen_height = SCREEN_HEIGHT // 2
-        half_screen_width = SCREEN_WIDTH // 2
-
         if self.death_count == 0:
-            font = pygame.font.Font(FONT_STYLE, 22)
-            text = font.render('press any key to start', True, (0,0,0))
-            text_rect = text.get_rect()
-            text_rect.center = (half_screen_width, half_screen_height)
-            self.screen.blit(text, text_rect)
-        else: 
-            self.screen.blit(ICON, (half_screen_width - 20, half_screen_height - 140))
-            ## mostrar mensagem de 'Press any key to restart'
-            ## mostrar score atingido
-            ## mostrar death_count
-
-            ### RESETAR score e game_speed quando o jogo for 'restartado'
-            ### Criar metodo para remover a repetição de codigo para o texto
+            self.screen.fill((255,255,255))
+            self.show_text("Press any key to start", SCREEN_HEIGHT/2, SCREEN_WIDTH/2)
+        else:
+            self.screen.fill((255,255,255))
+            self.show_text("Press any key to restart", SCREEN_HEIGHT/2, SCREEN_WIDTH/2)
+            self.show_text(f"Your score: {self.save_score}", 200, SCREEN_WIDTH/2)
+            self.show_text(f"Your death: {self.death_count}", 220, SCREEN_WIDTH/2)
         
         pygame.display.update()
 
