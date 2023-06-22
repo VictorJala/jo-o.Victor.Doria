@@ -1,6 +1,8 @@
 import pygame
 import os
 
+pygame.mixer.init()
+
 # Global Constants
 TITLE = "Chrome Dino Runner"
 SCREEN_HEIGHT = 600
@@ -22,8 +24,8 @@ RUNNING_SHIELD = [
 ]
 
 RUNNING_HAMMER = [
-    pygame.image.load(os.path.join(IMG_DIR, "Dino/DinoDuck1Hammer.png")),
     pygame.image.load(os.path.join(IMG_DIR, "Dino/DinoRun2.png")),
+    pygame.image.load(os.path.join(IMG_DIR, "Dino/DinoDuck1Hammer.png"))
 ]
 
 JUMPING = pygame.image.load(os.path.join(IMG_DIR, "Dino/DinoJump.png"))
@@ -64,10 +66,19 @@ BIRD = [
 CLOUD = pygame.image.load(os.path.join(IMG_DIR, 'Other/Cloud.png'))
 SHIELD = pygame.image.load(os.path.join(IMG_DIR, 'Other/shield.png'))
 HAMMER = pygame.image.load(os.path.join(IMG_DIR, 'Other/hammer.png'))
-
+MAIS_SCORE = pygame.image.load(os.path.join(IMG_DIR,'Other/mais_score.png'))
+SAO_JOAO = pygame.image.load(os.path.join(IMG_DIR,'Other/saojoao.png'))
+INICIAL = pygame.image.load(os.path.join(IMG_DIR,'Other/inicialgame1.png'))
+GAME_OVER = pygame.image.load(os.path.join(IMG_DIR,'Other/Gameover.png'))
 BG = pygame.image.load(os.path.join(IMG_DIR, 'Other/Track.png'))
-
 HEART = pygame.image.load(os.path.join(IMG_DIR, 'Other/SmallHeart.png'))
+
+JUMP_SOUND = pygame.mixer.Sound('smw_jump.wav') 
+COIN_SOUND = pygame.mixer.Sound("smw_coin.wav")
+DEATH_SOUND = pygame.mixer.Sound('smw_lost_a_life.wav')
+P_SOUND = pygame.mixer.music.load('BoxCat Games - CPU Talk.mp3')
+
 
 DEFAULT_TYPE = "default"
 SHIELD_TYPE = "shield"
+HAMMER_TYPE = "hammer"

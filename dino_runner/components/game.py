@@ -1,11 +1,12 @@
 import pygame
 
-from dino_runner.utils.constants import BG, ICON, SCREEN_HEIGHT, SCREEN_WIDTH, TITLE, FPS, DEFAULT_TYPE
+from dino_runner.utils.constants import *
 from dino_runner.utils.text_utils import draw_message_component
 from dino_runner.components.dinosaur import Dinosaur
 from dino_runner.components.obstacles.obstacle_manager import ObstacleManager
 from dino_runner.components.power_ups.power_up_manager import PowerUpManager
 
+SOUND_P = P_SOUND
 
 class Game:
     def __init__(self):
@@ -19,9 +20,12 @@ class Game:
         self.game_speed = 20
         self.x_pos_bg = 0
         self.y_pos_bg = 380
+        self.x_pos_cloud = 1100
+        self.y_pos_cloud = 100
         self.score = 0
         self.death_count = 0
-
+        self.vida = 1
+        
         self.player = Dinosaur()
         self.obstacle_manager = ObstacleManager()
         self.power_up_manager = PowerUpManager()
@@ -31,17 +35,22 @@ class Game:
         while self.running:
             if not self.playing:
                 self.show_menu()
-                
+                pygame.mixer.music.stop()
+        
         pygame.display.quit()
         pygame.quit()
 
+    #def maisScore(self):
+        #self.score += 150
+
     def run(self):
-        # Game loop: events - update - draw
+        SOUND_P = pygame.mixer.music.play(-1)
         self.playing = True
         self.obstacle_manager.reset_obstacles()
         self.power_up_manager.reset_power_ups()
         self.game_speed = 20
         self.score = 0
+        self.vida = 1
         while self.playing:
             self.events()
             self.update()
@@ -62,12 +71,14 @@ class Game:
     def update_score(self):
         self.score += 1
         if self.score % 100 == 0:
-            self.game_speed += 5
+            self.game_speed += 1
 
     def draw(self):
         self.clock.tick(FPS)
         self.screen.fill((255, 255, 255)) # "#FFFFFF"
+        self.screen.blit(SAO_JOAO, (0,0))
         self.draw_background()
+        self.draw_cloud()
         self.draw_score()
         self.player.draw(self.screen)
         self.obstacle_manager.draw(self.screen)
@@ -75,6 +86,15 @@ class Game:
         self.draw_power_up_time()
         pygame.display.update()
         pygame.display.flip()
+
+    def draw_cloud(self):
+        image_width = CLOUD.get_width()
+        self.screen.blit(CLOUD, (self.x_pos_cloud, self.y_pos_cloud))
+        self.screen.blit(CLOUD, (image_width + self.x_pos_cloud, self.y_pos_cloud))
+        if self.x_pos_cloud <= -image_width:
+            self.screen.blit(CLOUD, (image_width + self.x_pos_cloud, self.y_pos_cloud))
+            self.x_pos_cloud = 1100
+        self.x_pos_cloud -= self.game_speed
 
     def draw_background(self):
         image_width = BG.get_width()
@@ -92,6 +112,11 @@ class Game:
             pos_x_center=1000,
             pos_y_center=50
         )
+        draw_message_component(f'Vida: {self.vida}',
+                               self.screen,
+                               pos_x_center = 1000,
+                               pos_y_center= 100)
+        
 
     def draw_power_up_time(self):
         if self.player.has_power_up:
@@ -117,13 +142,14 @@ class Game:
                 self.run()
 
     def show_menu(self):
-        self.screen.fill((255, 255, 255))
+        # self.screen.fill((255, 255, 255))
         half_screen_height = SCREEN_HEIGHT // 2
         half_screen_width = SCREEN_WIDTH // 2
 
         if self.death_count == 0:
-            draw_message_component("Press any key to start", self.screen)
-        else:            
+            self.screen.blit(INICIAL, (0,0))
+            draw_message_component("Press any key to start", self.screen, pos_y_center=half_screen_height + 150)
+        else:         
             draw_message_component("Press any key to restart", self.screen, pos_y_center=half_screen_height + 140)
             draw_message_component(
                 f"Your Score: {self.score}",
